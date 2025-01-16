@@ -29,6 +29,9 @@ wifi:
 captive_portal:
 
 font:
+  - id: roboto_16
+    file: gfonts://Roboto
+    size: 16
   - id: roboto_32
     file: gfonts://Roboto
     size: 32
@@ -48,9 +51,13 @@ display:
   busy_pin:
     number: GPIO4
     inverted: true
-  lambda: |-
-    it.print(100, 100, id(roboto_32), "Hello ESPHome on TRMNL!");
-    it.printf(100, 200, id(roboto_32), "Uptime: %d seconds", millis() / 1000);
+  pages:
+    - id: main_page
+      lambda: |-
+        it.print(100, 100, id(roboto_32), "Hello ESPHome on TRMNL!");
+        it.printf(100, 200, id(roboto_32), "Uptime: %d seconds", millis() / 1000);
+
+        it.printf(750, 430, id(roboto_16), TextAlign::BOTTOM_RIGHT, "Battery: %.2fV", id(battery_voltage).state);
 
 binary_sensor:
   - platform: gpio
@@ -66,5 +73,6 @@ sensor:
     id: battery_voltage
     pin: GPIO3
     attenuation: 12db
+    samples: 128
     filters:
       - multiply: 2.0
