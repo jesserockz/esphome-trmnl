@@ -27,3 +27,44 @@ wifi:
 # In combination with the `ap` this allows the user
 # to provision wifi credentials to the device.
 captive_portal:
+
+font:
+  - id: roboto_32
+    file: gfonts://Roboto
+    size: 32
+
+spi:
+  mosi_pin: GPIO8
+  clk_pin: GPIO7
+
+display:
+  platform: waveshare_epaper
+  id: trmnl_display
+  cs_pin: GPIO6
+  model: 7.50inv2
+  update_interval: 60s
+  dc_pin: GPIO5
+  reset_pin: GPIO10
+  busy_pin:
+    number: GPIO4
+    inverted: true
+  lambda: |-
+    it.print(100, 100, id(roboto_32), "Hello ESPHome on TRMNL!");
+    it.printf(100, 200, id(roboto_32), "Uptime: %d seconds", millis() / 1000);
+
+binary_sensor:
+  - platform: gpio
+    name: Button
+    id: back_button
+    pin:
+      number: GPIO9
+      inverted: true
+
+sensor:
+  - platform: adc
+    name: Battery Voltage
+    id: battery_voltage
+    pin: GPIO3
+    attenuation: 12db
+    filters:
+      - multiply: 2.0
