@@ -66,5 +66,6 @@ sensor:
     id: battery_voltage
     pin: GPIO3
     attenuation: 12db
+    samples: 128
     filters:
       - multiply: 2.0
