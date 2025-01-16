@@ -51,11 +51,13 @@ display:
   busy_pin:
     number: GPIO4
     inverted: true
-  lambda: |-
-    it.print(100, 100, id(roboto_32), "Hello ESPHome on TRMNL!");
-    it.printf(100, 200, id(roboto_32), "Uptime: %d seconds", millis() / 1000);
+  pages:
+    - id: main
+      lambda: |-
+        it.print(100, 100, id(roboto_32), "Hello ESPHome on TRMNL!");
+        it.printf(100, 200, id(roboto_32), "Uptime: %d seconds", millis() / 1000);
 
-    it.printf(750, 430, id(roboto_16), TextAlign::BOTTOM_RIGHT, "Battery: %.2fV", id(battery_voltage).state);
+        it.printf(750, 430, id(roboto_16), TextAlign::BOTTOM_RIGHT, "Battery: %.2fV", id(battery_voltage).state);
 
 binary_sensor:
   - platform: gpio
