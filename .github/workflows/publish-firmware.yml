@@ -14,11 +14,8 @@ jobs:
     with:
       #### Modify below here to match your project ####
       files: |
-        project-template-esp32.factory.yaml
-        project-template-esp32-c3.factory.yaml
-        project-template-esp32-s3.factory.yaml
-      esphome-version: 2024.10.3
-      combined-name: project-template
+        trmnl.factory.yaml
+      esphome-version: 2024.12.2
       #### Modify above here to match your project ####
 
       release-summary: ${{ github.event.release.body }}
