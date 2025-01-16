@@ -52,7 +52,7 @@ display:
     number: GPIO4
     inverted: true
   pages:
-    - id: main
+    - id: main_page
       lambda: |-
         it.print(100, 100, id(roboto_32), "Hello ESPHome on TRMNL!");
         it.printf(100, 200, id(roboto_32), "Uptime: %d seconds", millis() / 1000);
