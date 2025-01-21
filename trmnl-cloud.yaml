@@ -1,0 +1,146 @@
+globals:
+  - id: device_id
+    type: std::string
+    max_restore_data_length: 6
+    restore_value: true
+    initial_value: '""'
+  - id: api_key
+    type: std::string
+    max_restore_data_length: 32
+    restore_value: true
+    initial_value: '""'
+  - id: sleep_time
+    type: uint32_t
+    restore_value: true
+    initial_value: "900"
+
+esphome:
+  name: trmnl-cloud
+
+wifi:
+  on_connect:
+    - delay: 16ms
+    - if:
+        condition:
+          lambda: |-
+            return id(device_id).empty() || id(api_key).empty();
+        then:
+          - script.execute: trmnl_setup
+        else:
+          - script.execute: trmnl_update
+
+http_request:
+  buffer_size_tx: 2048
+
+deep_sleep:
+  wakeup_pin:
+    number: GPIO2
+    inverted: true
+
+display:
+  update_interval: never
+  pages:
+    - id: trmnl_page
+      lambda: |-
+        it.image(0, 0, id(trmnl_image), COLOR_OFF, COLOR_ON);
+
+online_image:
+  - id: trmnl_image
+    format: bmp
+    type: BINARY
+    url: https://usetrmnl.com/images/setup/setup-logo.bmp
+    resize: 800x480
+    on_download_finished:
+      - display.page.show: trmnl_page
+      - component.update: trmnl_display
+      - delay: 100ms
+      - deep_sleep.enter:
+          sleep_duration: !lambda 'return id(sleep_time) * 1000;'
+
+sensor:
+  - id: !extend battery_voltage
+    on_value:
+      - text_sensor.template.publish:
+          id: battery_voltage_text
+          state: !lambda 'return str_sprintf("%.2f", x).c_str();'
+
+text_sensor:
+  - platform: wifi_info
+    mac_address:
+      id: mac_address_sensor
+  - platform: template
+    id: battery_voltage_text
+    update_interval: never
+
+script:
+
+# /api/setup
+# {
+#     "api_key": "...",
+#     "friendly_id": "...",
+#     "image_url": "https://usetrmnl.com/images/setup/setup-logo.bmp",
+#     "message": "Register at usetrmnl.com/signup with Device ID '...'",
+#     "status": 200
+# }
+  - id: trmnl_setup
+    then:
+      - logger.log: "Setting up TRMNL"
+      - http_request.get:
+          url: https://trmnl.app/api/setup
+          headers:
+            ID: !lambda 'return id(mac_address_sensor).state.c_str();'
+          capture_response: true
+          on_response:
+            - logger.log:
+                format: "TRMNL Setup Response: %s"
+                args: [body.c_str()]
+            - if:
+                condition:
+                  lambda: return response->status_code == 200;
+                then:
+                  - lambda: |-
+                      json::parse_json(body, [](JsonObject root) -> bool {
+                        id(api_key) = root["api_key"].as<std::string>();
+                        id(device_id) = root["friendly_id"].as<std::string>();
+                        global_preferences->sync();
+                        return true;
+                      });
+                  - delay: 16ms  # lets the http_request component free up the reserved memory
+                  - script.execute: trmnl_update
+
+
+# /api/display
+# {
+#     "filename": "....bmp",
+#     "firmware_url": "https://trmnl.s3.us-east-2.amazonaws.com/FW1.4.5.bin",
+#     "image_url": "https://trmnl.s3.us-east-2.amazonaws.com/...",
+#     "refresh_rate": 903,
+#     "reset_firmware": false,
+#     "special_function": "identify",
+#     "status": 0,
+#     "update_firmware": null
+# }
+  - id: trmnl_update
+    then:
+      - logger.log: "Updating TRMNL image"
+      - http_request.get:
+          url: https://trmnl.app/api/display
+          headers:
+            ID: !lambda 'return id(mac_address_sensor).state.c_str();'
+            Access-Token: !lambda 'return id(api_key).c_str();'
+            Battery-Voltage: !lambda 'return id(battery_voltage_text).state.c_str();'
+          capture_response: true
+          on_response:
+            - logger.log:
+                format: "TRMNL Update Response: %s"
+                args: [body.c_str()]
+            - lambda: |-
+                json::parse_json(body, [](JsonObject root) -> bool {
+                  if (root["status"].as<int>() == 0) {
+                    id(trmnl_image).set_url(root["image_url"].as<std::string>());
+                    id(sleep_time) = root["refresh_rate"].as<uint32_t>();
+                  }
+                  return true;
+                });
+            - delay: 16ms  # lets the http_request component free up the reserved memory
+            - component.update: trmnl_image

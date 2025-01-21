@@ -1,0 +1,3 @@
+packages:
+  factory: !include trmnl.factory.yaml
+  cloud: !include trmnl-cloud.yaml

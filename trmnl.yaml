@@ -58,6 +58,9 @@ display:
         it.printf(100, 200, id(roboto_32), "Uptime: %d seconds", millis() / 1000);
 
         it.printf(750, 430, id(roboto_16), TextAlign::BOTTOM_RIGHT, "Battery: %.2fV", id(battery_voltage).state);
+    - id: blank_page
+      lambda: |-
+        it.fill(COLOR_ON);
 
 binary_sensor:
   - platform: gpio
@@ -76,3 +79,8 @@ sensor:
     samples: 128
     filters:
       - multiply: 2.0
+
+button:
+  - platform: restart
+    name: Restart
+    id: restart_button
