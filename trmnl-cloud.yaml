@@ -1,3 +1,6 @@
+packages:
+  factory: !include trmnl.factory.yaml
+
 globals:
   - id: device_id
     type: std::string
