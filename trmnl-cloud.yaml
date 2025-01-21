@@ -49,7 +49,7 @@ display:
 
 external_components:
   - source: github://pr#8116
-    components: [online_image]
+    components: [online_image, image]
     refresh: 0s
 
 online_image:
