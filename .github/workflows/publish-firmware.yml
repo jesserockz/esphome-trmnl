@@ -15,6 +15,7 @@ jobs:
       #### Modify below here to match your project ####
       files: |
         trmnl.factory.yaml
+        trmnl-cloud.factory.yaml
       esphome-version: 2024.12.2
       #### Modify above here to match your project ####
 
