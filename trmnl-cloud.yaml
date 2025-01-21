@@ -44,6 +44,11 @@ display:
       lambda: |-
         it.image(0, 0, id(trmnl_image), COLOR_OFF, COLOR_ON);
 
+external_components:
+  - source: github://pr#8116
+    components: [online_image]
+    refresh: 0s
+
 online_image:
   - id: trmnl_image
     format: bmp
