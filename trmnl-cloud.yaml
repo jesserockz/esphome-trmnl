@@ -47,6 +47,33 @@ display:
     - id: trmnl_page
       lambda: |-
         it.image(0, 0, id(trmnl_image), COLOR_OFF, COLOR_ON);
+    - id: logo
+      lambda: |-
+        it.image(0, 0, id(trmnl_logo));
+    - id: wifi_connect
+      lambda: |-
+        // Factory firmware draws at X: 640, Y: 337 and dimensions of 130x130
+        auto size = id(wifi_connect_qr).get_size() * 2;
+        auto x = (it.get_width() / 2) - (size / 2);
+        auto y = (it.get_height() / 2) - (size / 2);
+        it.qr_code(x, y, id(wifi_connect_qr), COLOR_ON, 2);
+    - id: wifi_failed
+      lambda: |-
+        // Factory firmware draws at X: 640, Y: 337 and dimensions of 130x130
+        auto size = id(wifi_failed_qr).get_size() * 2;
+        auto x = (it.get_width() / 2) - (size / 2);
+        auto y = (it.get_height() / 2) - (size / 2);
+        it.qr_code(x, y, id(wifi_failed_qr), COLOR_ON, 2);
+
+image:
+  - id: trmnl_logo
+    file: "https://raw.githubusercontent.com/usetrmnl/firmware/refs/heads/main/logo.bmp"
+
+qr_code:
+  - id: wifi_connect_qr
+    value: "WIFI:T:nopass;S:TRMNL;;"
+  - id: wifi_failed_qr
+    value: "https://help.usetrmnl.com/en/articles/10193157-device-wifi-troubleshooting"
 
 online_image:
   - id: trmnl_image
