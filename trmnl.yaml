@@ -4,6 +4,12 @@ esphome:
   # Automatically add the mac address to the name
   # so you can use a single firmware for all devices
   name_add_mac_suffix: true
+  # Dynamically set QR Code value for connecting to captive portal
+  on_boot:
+    - priority: 600
+      then:
+        - lambda: |-
+            id(wifi_connect_qr).set_value("WIFI:T:nopass;S:" + App.get_name() + ";;");
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -22,9 +28,7 @@ ota:
 
 wifi:
   # Set up a wifi access point using the device name above
-  # SSID needs to be static so the QR code shown on screen works
   ap:
-    ssid: "TRMNL"
 
 # In combination with the `ap` this allows the user
 # to provision wifi credentials to the device.
