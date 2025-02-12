@@ -74,6 +74,7 @@ display:
 image:
   - id: trmnl_logo
     file: "https://raw.githubusercontent.com/usetrmnl/firmware/refs/heads/main/logo.bmp"
+    type: BINARY
 
 qr_code:
   - id: wifi_connect_qr
