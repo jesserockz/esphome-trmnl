@@ -16,7 +16,7 @@ jobs:
       files: |
         trmnl.factory.yaml
         trmnl-cloud.factory.yaml
-      esphome-version: 2024.12.2
+      esphome-version: beta
       #### Modify above here to match your project ####
 
       release-summary: ${{ github.event.release.body }}
