@@ -19,6 +19,12 @@ globals:
 
 esphome:
   name: trmnl-cloud
+  # Dynamically set QR Code value for connecting to captive portal
+  on_boot:
+    - priority: 600
+      then:
+        - lambda: |-
+            id(wifi_connect_qr).set_value("WIFI:T:nopass;S:" + App.get_name() + ";;");
 
 wifi:
   on_connect:

@@ -4,12 +4,6 @@ esphome:
   # Automatically add the mac address to the name
   # so you can use a single firmware for all devices
   name_add_mac_suffix: true
-  # Dynamically set QR Code value for connecting to captive portal
-  on_boot:
-    - priority: 600
-      then:
-        - lambda: |-
-            id(wifi_connect_qr).set_value("WIFI:T:nopass;S:" + App.get_name() + ";;");
 
 esp32:
   board: esp32-c3-devkitm-1
