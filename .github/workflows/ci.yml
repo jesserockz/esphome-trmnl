@@ -27,7 +27,7 @@ jobs:
         #### Modify above here to match your project ####
 
         esphome-version:
-          - stable
+          # - stable
           - beta
           - dev
     steps:
