@@ -125,7 +125,7 @@ script:
       - logger.log: "Setting up TRMNL"
       - http_request.get:
           url: https://trmnl.app/api/setup
-          headers:
+          request_headers:
             ID: !lambda 'return id(mac_address_sensor).state.c_str();'
           capture_response: true
           on_response:
@@ -163,7 +163,7 @@ script:
       - logger.log: "Updating TRMNL image"
       - http_request.get:
           url: https://trmnl.app/api/display
-          headers:
+          request_headers:
             ID: !lambda 'return id(mac_address_sensor).state.c_str();'
             Access-Token: !lambda 'return id(api_key).c_str();'
             Battery-Voltage: !lambda 'return id(battery_voltage_text).state.c_str();'
